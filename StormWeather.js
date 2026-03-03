@@ -4,7 +4,7 @@ import Particles from "react-tsparticles";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-export default function Home() {
+export default function StormWeather({ weatherData }) {
   const [lightningFlash, setLightningFlash] = useState(false);
   const [shake, setShake] = useState(false);
 
@@ -36,7 +36,7 @@ export default function Home() {
   const rainConfig = {
     particles: {
       number: {
-        value: 200, // Increased for heavier rain
+        value: 200,
         density: {
           enable: true,
           value_area: 800
@@ -58,7 +58,7 @@ export default function Home() {
       },
       move: {
         enable: true,
-        speed: { min: 8, max: 15 }, // Faster, heavier rain
+        speed: { min: 8, max: 15 },
         direction: "bottom",
         straight: false,
         outModes: {
@@ -80,20 +80,13 @@ export default function Home() {
   };
 
   // Create rain drops using CSS
-const [rainDrops, setRainDrops] = useState([]);
-
-useEffect(() => {
-  const drops = Array.from({ length: 100 }, (_, i) => ({
+  const rainDrops = Array.from({ length: 100 }, (_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     animationDelay: `${Math.random() * 2}s`,
     animationDuration: `${0.5 + Math.random() * 1}s`,
     opacity: 0.3 + Math.random() * 0.4
   }));
-
-  setRainDrops(drops);
-}, []);
-
 
   return (
     <div className={`relative min-h-screen storm-bg overflow-hidden ${shake ? 'thunder-shake' : ''}`}>
@@ -202,18 +195,22 @@ useEffect(() => {
               ⚡ Storm Status: Active
             </h2>
             <div className="text-blue-100 space-y-3">
-              <p className="flex items-center justify-center gap-2">
-                <span className="text-2xl">🌧️</span>
-                <span>Heavy Rain: Intensity Level 8/10</span>
-              </p>
-              <p className="flex items-center justify-center gap-2">
-                <span className="text-2xl">⚡</span>
-                <span>Lightning Activity: Moderate</span>
-              </p>
-              <p className="flex items-center justify-center gap-2">
-                <span className="text-2xl">💨</span>
-                <span>Wind Speed: 25 mph gusts</span>
-              </p>
+              {weatherData && (
+                <>
+                  <p className="flex items-center justify-center gap-2">
+                    <span className="text-2xl">🌡️</span>
+                    <span>Temperature: {Math.round(weatherData.temperature_2m)}°C</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span className="text-2xl">💧</span>
+                    <span>Precipitation: {weatherData.precipitation} mm/h</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span className="text-2xl">💨</span>
+                    <span>Wind Speed: {Math.round(weatherData.wind_speed_10m)} km/h</span>
+                  </p>
+                </>
+              )}
             </div>
             
             <motion.button
